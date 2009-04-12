@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{turbine-core}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nathan Herald"]
@@ -15,18 +15,19 @@ Gem::Specification.new do |s|
   s.files = [
     "Rakefile",
     "VERSION.yml",
-    "lib/ext.rb",
-    "lib/importers/json_importer.rb",
-    "lib/importers/text_importer.rb",
-    "lib/post_type.rb",
-    "lib/types/article.rb",
-    "lib/types/audio.rb",
-    "lib/types/chat.rb",
-    "lib/types/link.rb",
-    "lib/types/photo.rb",
-    "lib/types/quote.rb",
-    "lib/types/review.rb",
-    "lib/types/video.rb",
+    "lib/turbine-core.rb",
+    "lib/turbine-core/ext.rb",
+    "lib/turbine-core/importers/json_importer.rb",
+    "lib/turbine-core/importers/text_importer.rb",
+    "lib/turbine-core/post_type.rb",
+    "lib/turbine-core/types/article.rb",
+    "lib/turbine-core/types/audio.rb",
+    "lib/turbine-core/types/chat.rb",
+    "lib/turbine-core/types/link.rb",
+    "lib/turbine-core/types/photo.rb",
+    "lib/turbine-core/types/quote.rb",
+    "lib/turbine-core/types/review.rb",
+    "lib/turbine-core/types/video.rb",
     "spec/post_type_spec.rb",
     "spec/post_types/chat_spec.rb",
     "spec/post_types/link_spec.rb",
