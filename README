@@ -1,3 +1,6 @@
 This is the core engine of my turbine project: taking text and making sense of it.
 
 Look at the specs or at turbine-blog to help understand what this thing does.
+
+To run the specs:
+> bacon spec/**/*.rb spec/*.rb
