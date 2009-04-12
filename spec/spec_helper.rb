@@ -2,7 +2,7 @@ require "rubygems"
 require 'bacon'
 require 'mocha'
 
-require File.expand_path(File.join(__FILE__.split('/spec').first, 'turbine-core.rb'))
+require File.expand_path(File.join(__FILE__.split('/spec').first, 'lib/turbine-core.rb'))
 
 PostType.preferred_order = [Video, Audio, Photo, Chat, Review, Link, Quote, Article]
 
