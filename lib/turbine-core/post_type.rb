@@ -6,7 +6,7 @@ class PostType
   extend ClassLevelInheritableAttributes
   include Extlib::Hook
   
-  DEFAULT_FIELDS = [:published_at, :status, :slug, :trackbacks, :type, :tags]
+  DEFAULT_FIELDS = [:published_at, :status, :slug, :trackbacks, :type, :tags, :__original]
   
   # vars to inherit down
   cattr_inheritable :fields_list, :allowed_fields_list, :required_fields_list, :primary_field, :heading_field, 
@@ -202,12 +202,18 @@ class PostType
   end
   
   def content=(stuff) # !> method redefined; discarding old content=
-    @content = { :type => self.class.name.to_s }
-    import(stuff)
-    eval_specials
-    eval_defaults
-    parse_tags unless blank_attr?(:tags)
-    generate_slug if get_attr?(:slug)
+    case stuff
+    when String
+      @content = { :type => self.class.name.to_s }
+      import(stuff)
+      eval_specials
+      eval_defaults
+      parse_tags unless blank_attr?(:tags)
+      generate_slug if get_attr?(:slug)
+    when Hash
+      @content = stuff.merge(:type => self.class.name.to_s)
+    end
+      
     @content
   end#of content=
   
@@ -242,6 +248,7 @@ class PostType
   
   # TODO: how to determine the type of stuff? (text, json, yaml, image, video, photo, pdf, generic download file (can lookup type of file for icon if needed))
   def import(stuff, type = :text)
+    set_attr(:__original, stuff)
     importer = Kernel.const_get(type.to_s.camel_case+'Importer').new(self.class)
     
     # The result sent back by an importer is either:
@@ -249,7 +256,7 @@ class PostType
     #     [{ :one => 'stuff' }, { :two => 'stuff' }]
     #   Hash:
     #     { :one => 'stuff', :two => 'stuff' }
-    result = importer.import(stuff) 
+    result = stuff.blank? ? {} : importer.import(stuff)
     
     case result
     when Array
