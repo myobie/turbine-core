@@ -1,3 +1,7 @@
+require 'json'
+
+class Json < String; end # just so that we know which importer to run
+
 class JsonImporter
   
   attr_accessor :result, :type

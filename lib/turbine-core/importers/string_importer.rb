@@ -1,4 +1,4 @@
-class TextImporter
+class StringImporter
   
   attr_accessor :remainder, :result, :type
   

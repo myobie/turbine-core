@@ -99,6 +99,7 @@ class PostType
                                 ].flatten.uniq
   end
   
+  # TODO: when setting an attr, we should also run it's special block if it has one
   def set_attr(key, value)
     key = key.make_attr
     
@@ -125,8 +126,11 @@ class PostType
     get_attr(key).blank?
   end
   
-  alias :get_attr? :blank_attr?
+  def get_attr?(key)
+    !blank_attr?(key)
+  end
   
+  # TODO: get_attr should return a default if it's blank
   def get_attr(key, html = true)
     key = key.make_attr
     
@@ -182,7 +186,7 @@ class PostType
   end
   
   def self.get_pairs(text)
-    TextImporter.new(self).import(text)
+    StringImporter.new(self).import(text)
   end
   
   def self.get_pairs_count(text, fields)
@@ -202,18 +206,8 @@ class PostType
   end
   
   def content=(stuff) # !> method redefined; discarding old content=
-    case stuff
-    when String
-      @content = { :type => self.class.name.to_s }
-      import(stuff)
-      eval_specials
-      eval_defaults
-      parse_tags unless blank_attr?(:tags)
-      generate_slug if get_attr?(:slug)
-    when Hash
-      @content = stuff.merge(:type => self.class.name.to_s)
-    end
-      
+    @content = { :type => self.class.name.to_s }
+    import(stuff)
     @content
   end#of content=
   
@@ -229,9 +223,9 @@ class PostType
     v
   end
   
-  def initialize(text = nil)
-    if text
-      self.content = text
+  def initialize(stuff = nil)
+    if stuff
+      self.content = stuff
       # sanitize_content_fields
     end
   end
@@ -246,10 +240,8 @@ class PostType
     end
   end
   
-  # TODO: how to determine the type of stuff? (text, json, yaml, image, video, photo, pdf, generic download file (can lookup type of file for icon if needed))
-  def import(stuff, type = :text)
-    set_attr(:__original, stuff)
-    importer = Kernel.const_get(type.to_s.camel_case+'Importer').new(self.class)
+  def import(stuff)
+    importer = Kernel.const_get(stuff.class.name+'Importer').new(self.class)
     
     # The result sent back by an importer is either:
     #   Array:
@@ -264,6 +256,11 @@ class PostType
     when Hash
       commit_hash(result)
     end
+    
+    eval_specials # this won't be needed once the set_attr takes care of it
+    eval_defaults # this won't be needed once the get_attr takes care of it
+    parse_tags unless blank_attr?(:tags) # TODO: parse_tags needs to be turned into a special block
+    generate_slug if get_attr?(:slug) # TODO: generate_slug should be turned into a default block
   end
   
   def commit_hash(pairs_hash)
@@ -319,6 +316,8 @@ class PostType
   end
 
   def generate_slug # OPTIMIZE: this slug generation is ugly
+    return unless blank_attr?(:slug)
+    
     result = ''
   
     unless self.class.always_use_uuid
@@ -364,6 +363,24 @@ class PostType
 
   def uuid
     UUID.timestamp_create.to_s
+  end
+  
+  def to_s
+    fields_to_parse = self.class.fields_list - [self.class.primary_field]
+    
+    result = fields_to_parse.map do |field|
+      unless blank_attr?(field)
+        
+        "#{field}: #{get_attr(field)}" 
+        
+        # TODO: make a way to override this like string_for :content { "hello" }
+      
+      end#unless
+    end.join("\n") << "\n"
+    
+    result << get_attr(self.class.primary_field, false)
+    
+    result.strip
   end
   
 end
