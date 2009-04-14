@@ -259,8 +259,8 @@ class PostType
     
     eval_specials # this won't be needed once the set_attr takes care of it
     eval_defaults # this won't be needed once the get_attr takes care of it
-    parse_tags unless blank_attr?(:tags) # TODO: parse_tags needs to be turned into a special block
-    generate_slug if get_attr?(:slug) # TODO: generate_slug should be turned into a default block
+    parse_tags # TODO: parse_tags needs to be turned into a special block
+    generate_slug # TODO: generate_slug should be turned into a default block
   end
   
   def commit_hash(pairs_hash)
@@ -292,7 +292,7 @@ class PostType
   end
 
   def parse_tags
-    if get_attr(:tags).class == String
+    if get_attr?(:tags) && get_attr(:tags).class == String
       tags_array = get_attr(:tags).split(',').collect { |t| t.strip }
       set_attr(:tags, tags_array)
     end
@@ -339,7 +339,7 @@ class PostType
       result.slugify!
     end#of unless
   
-    if result.blank?
+    if result.blank? || !slug_is_unique
       result = uuid
     end
   
