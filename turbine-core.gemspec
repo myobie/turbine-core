@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{turbine-core}
-  s.version = "0.2.0"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nathan Herald"]
-  s.date = %q{2009-04-13}
+  s.date = %q{2009-04-14}
   s.description = %q{TODO}
   s.email = %q{nathan@myobie.com}
   s.extra_rdoc_files = [
@@ -17,8 +17,9 @@ Gem::Specification.new do |s|
     "VERSION.yml",
     "lib/turbine-core.rb",
     "lib/turbine-core/ext.rb",
+    "lib/turbine-core/importers/hash_importer.rb",
     "lib/turbine-core/importers/json_importer.rb",
-    "lib/turbine-core/importers/text_importer.rb",
+    "lib/turbine-core/importers/string_importer.rb",
     "lib/turbine-core/post_type.rb",
     "lib/turbine-core/types/article.rb",
     "lib/turbine-core/types/audio.rb",
