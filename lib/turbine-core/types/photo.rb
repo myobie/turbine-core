@@ -1,5 +1,5 @@
 class Photo < PostType
-  fields :photo_url, :caption
+  fields :photo_url, :caption, :url
   required :photo_url
   primary :caption
   
@@ -14,6 +14,10 @@ class Photo < PostType
   #     end#unless
   #   end#if
   # end#special
+  
+  special :url do |link_content|
+    'http://' + link_content.gsub(/^http:\/\//, '')
+  end
   
   def self.detect?(text)
     has_required? text
