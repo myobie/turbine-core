@@ -132,6 +132,8 @@ class PostType
   
   # TODO: get_attr should return a default if it's blank
   def get_attr(key, html = true)
+    return nil if key.blank?
+    
     key = key.make_attr
     
     if html && self.class.markdown_fields.include?(key)
