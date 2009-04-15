@@ -20,8 +20,7 @@ class Quote < PostType
     the_quote = the_quote.first || {}
     
     markdown = Markdown.new(the_quote[:quote])
-    quote_html = markdown.to_html || ""
-    quote_html.strip!
+    quote_html = markdown.text.blank? ? "" : markdown.to_html.strip
     
     !(text =~ /Quote: (.*)/).nil? || !(quote_html =~ /^<blockquote(.+)<\/blockquote>$/m).nil?
   end
