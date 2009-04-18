@@ -1,3 +1,4 @@
+* needs to_s_for :field {} so I can make the tags array into a string
 * to_json needs to be implimented
 * to_yaml as well
 * to_html needs to be added to PostType
