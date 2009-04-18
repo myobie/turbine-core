@@ -1,6 +1,6 @@
 require "rubygems"
 require 'bacon'
-require 'mocha'
+require 'facon'
 
 require File.expand_path(File.join(__FILE__.split('/spec').first, 'lib/turbine-core.rb'))
 

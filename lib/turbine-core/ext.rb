@@ -15,6 +15,11 @@ class String
   def make_attr
     self.downcase.to_sym
   end
+  
+  def indents(remove_blanks = false)
+    # clear blank lines and then clear left margin
+    reject { |line| line.blank? && remove_blanks }.map { |line| line.gsub(/^\s+$/, "\n") }.join.margin.strip
+  end
 end
 
 class Symbol

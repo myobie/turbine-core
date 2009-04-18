@@ -6,7 +6,8 @@ class PostType
   extend ClassLevelInheritableAttributes
   include Extlib::Hook
   
-  DEFAULT_FIELDS = [:published_at, :status, :slug, :trackbacks, :type, :tags, :__original]
+  DEFAULT_FIELDS = [:published_at, :status, :slug, :trackbacks, :type, :tags]
+  NON_EDITABLE_FIELDS = [:trackbacks, :type, :published_at, :status] # don't show up in to_s
   
   # vars to inherit down
   cattr_inheritable :fields_list, :allowed_fields_list, :required_fields_list, :primary_field, :heading_field, 
@@ -366,7 +367,7 @@ class PostType
   end
   
   def to_s
-    fields_to_parse = self.class.fields_list - [self.class.primary_field]
+    fields_to_parse = self.class.fields_list - [self.class.primary_field] + DEFAULT_FIELDS - NON_EDITABLE_FIELDS
     
     result = fields_to_parse.map do |field|
       unless blank_attr?(field)
@@ -376,7 +377,7 @@ class PostType
         # TODO: make a way to override this like string_for :content { "hello" }
       
       end#unless
-    end.join("\n") << "\n"
+    end.compact.join("\n") << "\n\n"
     
     unless self.class.primary_field.blank? || blank_attr?(self.class.primary_field)
       result << get_attr(self.class.primary_field, false) 
