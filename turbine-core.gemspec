@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{turbine-core}
-  s.version = "0.3.7"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nathan Herald"]
-  s.date = %q{2009-04-15}
+  s.date = %q{2009-04-18}
   s.description = %q{TODO}
   s.email = %q{nathan@myobie.com}
   s.extra_rdoc_files = [
@@ -29,7 +29,8 @@ Gem::Specification.new do |s|
     "lib/turbine-core/types/quote.rb",
     "lib/turbine-core/types/review.rb",
     "lib/turbine-core/types/video.rb",
-    "spec/post_type_spec.rb",
+    "spec/general/formats_spec.rb",
+    "spec/general/post_type_spec.rb",
     "spec/post_types/chat_spec.rb",
     "spec/post_types/link_spec.rb",
     "spec/post_types/quote_spec.rb",
@@ -44,7 +45,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.1}
   s.summary = %q{TODO}
   s.test_files = [
-    "spec/post_type_spec.rb",
+    "spec/general/formats_spec.rb",
+    "spec/general/post_type_spec.rb",
     "spec/post_types/chat_spec.rb",
     "spec/post_types/link_spec.rb",
     "spec/post_types/quote_spec.rb",
