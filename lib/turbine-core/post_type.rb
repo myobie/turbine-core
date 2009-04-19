@@ -54,6 +54,10 @@ class PostType
       end
     end
     
+    klass.default :slug do
+      generate_slug
+    end
+    
     all_children #return original result
   end
   
@@ -288,8 +292,6 @@ class PostType
     
     eval_specials # this won't be needed once the set_attr takes care of it
     eval_defaults # this won't be needed once the get_attr takes care of it
-    parse_tags # TODO: parse_tags needs to be turned into a special block
-    generate_slug # TODO: generate_slug should be turned into a default block
   end
   
   def commit_hash(pairs_hash)
@@ -326,10 +328,6 @@ class PostType
     else
       get_attr(key)
     end
-  end
-
-  def parse_tags
-    
   end
 
   def sanitize_content_fields
