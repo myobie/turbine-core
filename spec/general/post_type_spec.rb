@@ -224,6 +224,18 @@ This will be in One."
     yellow.to_s.should.match /^one: HELLO\nslug: .*/
   end
   
+  should "have a special block for tags" do
+    class Yellow < PostType; end
+    
+    Yellow.specials_blocks[:tags].should.not.be.nil
+  end
+  
+  should "store tags as an array" do
+    class Yellow < PostType; end
+    yellow = Yellow.new "tags: cat, dog, water"
+    yellow.get_attr(:tags).should == ['cat', 'dog', 'water']
+  end
+  
   should "have a string_for block for tags" do
     class Yellow < PostType; end
     

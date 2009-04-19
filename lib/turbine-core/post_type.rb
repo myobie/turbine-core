@@ -40,9 +40,18 @@ class PostType
   end
   ### cattr_accessor
   
+  ### Defaults
   after_class_method :inherited do |all_children, klass|
-    klass.string_for :tags do |content|
-      content.join(', ')
+    klass.string_for :tags do |tags_array|
+      tags_array.join(', ')
+    end
+    
+    klass.special :tags do |tags_string|
+      if tags_string.is_a? String
+        tags_string.split(',').collect { |t| t.strip }
+      else
+        tags_string
+      end
     end
     
     all_children #return original result
@@ -320,10 +329,7 @@ class PostType
   end
 
   def parse_tags
-    if get_attr?(:tags) && get_attr(:tags).class == String
-      tags_array = get_attr(:tags).split(',').collect { |t| t.strip }
-      set_attr(:tags, tags_array)
-    end
+    
   end
 
   def sanitize_content_fields
