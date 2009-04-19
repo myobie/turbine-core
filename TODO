@@ -1,7 +1,9 @@
-* needs to_s_for :field {} so I can make the tags array into a string
+* needs string_for :field {} so I can make the tags array into a string
 * to_json needs to be implimented
 * to_yaml as well
 * to_html needs to be added to PostType
   - needs a haml helper to render from a string of haml
   - use the indents on String
   - make an html_for :field {} class method to create the haml strings
+
+* Organize methods in PostType

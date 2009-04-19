@@ -7,11 +7,12 @@ class PostType
   include Extlib::Hook
   
   DEFAULT_FIELDS = [:published_at, :status, :slug, :trackbacks, :type, :tags]
-  NON_EDITABLE_FIELDS = [:trackbacks, :type, :published_at, :status] # don't show up in to_s
+  NON_EDITABLE_FIELDS = [:trackbacks, :type, :published_at]
+  
   
   # vars to inherit down
   cattr_inheritable :fields_list, :allowed_fields_list, :required_fields_list, :primary_field, :heading_field, 
-                    :specials_blocks, :defaults_blocks, :only_declared_fields, :always_use_uuid,
+                    :specials_blocks, :defaults_blocks, :string_for_blocks, :only_declared_fields, :always_use_uuid,
                     :truncate_slugs, :markdown_fields
   
   # defaults for class instance inheritable vars
@@ -22,11 +23,15 @@ class PostType
   @heading_field = nil
   @specials_blocks = {}
   @defaults_blocks = {}
+  @string_for_blocks = {}
   @only_declared_fields = true
   @always_use_uuid = false
   @truncate_slugs = true
   @markdown_fields = []
   
+  def self.all_fields
+    fields_list + DEFAULT_FIELDS - NON_EDITABLE_FIELDS
+  end
   
   ### cattr_accessor
   @@preferred_order = []
@@ -42,7 +47,7 @@ class PostType
   attr_accessor :content # where everything is stored
   
   ### basic setup methods for types of posts
-  def self.fields(*list) # NOTE: this is a replacing function, not addititve like the others
+  def self.fields(*list)
     self.fields_list = list.make_attrs
     self.allowed_fields_list = [DEFAULT_FIELDS, list.make_attrs].flatten.uniq
   end
@@ -74,12 +79,17 @@ class PostType
   
   def self.special(field, &block)
     field = field.make_attr
-    self.specials_blocks[field.make_attr] = block if fields_list.include? field
+    self.specials_blocks[field] = block if fields_list.include? field
+  end
+  
+  def self.string_for(field, &block)
+    field = field.make_attr
+    self.string_for_blocks[field] = block if fields_list.include? field
   end
   
   def self.default(field, &block)
     field = field.make_attr
-    self.defaults_blocks[field.make_attr] = block if fields_list.include? field
+    self.defaults_blocks[field] = block if fields_list.include? field
   end
   
   def self.dynamic(field, &block)
@@ -291,6 +301,14 @@ class PostType
       end
     end
   end
+  
+  def get_string_for key
+    if self.class.string_for_blocks[key]
+      self.class.string_for_blocks[key].call(get_attr(key))
+    else
+      get_attr(key)
+    end
+  end
 
   def parse_tags
     if get_attr?(:tags) && get_attr(:tags).class == String
@@ -372,9 +390,7 @@ class PostType
     result = fields_to_parse.map do |field|
       unless blank_attr?(field)
         
-        "#{field}: #{get_attr(field)}" 
-        
-        # TODO: make a way to override this like string_for :content { "hello" }
+        "#{field}: #{get_string_for(field)}" 
       
       end#unless
     end.compact.join("\n") << "\n\n"
