@@ -221,7 +221,23 @@ This will be in One."
     
     yellow = Yellow.new "one: hello"
     
-    yellow.to_s.should.match /^one: HELLO.*/
+    yellow.to_s.should.match /^one: HELLO\nslug: .*/
+  end
+  
+  should "have a string_for block for tags" do
+    class Yellow < PostType; end
+    
+    Yellow.string_for_blocks[:tags].should.not.be.nil
+  end
+  
+  should "be always output the tags array as a comma separated string" do
+    class Yellow < PostType
+      fields :one
+    end
+    
+    yellow = Yellow.new "one: hello\ntags: dog, cat, water"
+    
+    yellow.to_s.should.match /^one: hello\nslug: .*\ntags: dog, cat, water.*/
   end
   
 end

@@ -17,7 +17,7 @@ class PostType
   
   # defaults for class instance inheritable vars
   @fields_list = []
-  @allowed_fields_list = []
+  @allowed_fields_list = DEFAULT_FIELDS
   @required_fields_list = []
   @primary_field = nil
   @heading_field = nil
@@ -29,10 +29,6 @@ class PostType
   @truncate_slugs = true
   @markdown_fields = []
   
-  def self.all_fields
-    fields_list + DEFAULT_FIELDS - NON_EDITABLE_FIELDS
-  end
-  
   ### cattr_accessor
   @@preferred_order = []
   
@@ -43,6 +39,14 @@ class PostType
     @@preferred_order = new_order
   end
   ### cattr_accessor
+  
+  after_class_method :inherited do |all_children, klass|
+    klass.string_for :tags do |content|
+      content.join(', ')
+    end
+    
+    all_children #return original result
+  end
   
   attr_accessor :content # where everything is stored
   
@@ -79,17 +83,22 @@ class PostType
   
   def self.special(field, &block)
     field = field.make_attr
-    self.specials_blocks[field] = block if fields_list.include? field
+    self.specials_blocks[field] = block if allowed_fields_list.include? field
   end
   
   def self.string_for(field, &block)
     field = field.make_attr
-    self.string_for_blocks[field] = block if fields_list.include? field
+    self.string_for_blocks[field] = block if allowed_fields_list.include? field
+  end
+  
+  ### Defaults
+  string_for :tags do |content|
+    content.join(', ')
   end
   
   def self.default(field, &block)
     field = field.make_attr
-    self.defaults_blocks[field] = block if fields_list.include? field
+    self.defaults_blocks[field] = block if allowed_fields_list.include? field
   end
   
   def self.dynamic(field, &block)
