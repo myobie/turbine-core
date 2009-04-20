@@ -397,9 +397,7 @@ class PostType
     
     result = fields_to_parse.map do |field|
       unless blank_attr?(field)
-        
         "#{field}: #{get_string_for(field)}" 
-      
       end#unless
     end.compact.join("\n") << "\n\n"
     
