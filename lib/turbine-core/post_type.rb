@@ -399,10 +399,10 @@ class PostType
       unless blank_attr?(field)
         "#{field}: #{get_string_for(field)}" 
       end#unless
-    end.compact.join("\n") << "\n\n"
+    end.compact.join("\n")
     
     unless self.class.primary_field.blank? || blank_attr?(self.class.primary_field)
-      result << get_attr(self.class.primary_field, false) 
+      result << "\n\n" + get_attr(self.class.primary_field, false)
     end
     
     result.strip
