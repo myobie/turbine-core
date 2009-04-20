@@ -124,7 +124,7 @@ This will be in One."
     end
     
     y = Yellow.new 'hello'
-    
+    y.save # to trigger defaults
     y.get_attr(:two).should == 2
   end
   
@@ -192,6 +192,35 @@ This will be in One."
       one: hello1
       two: hello2
       title: This is the title
+      
+      this is the body
+    }.indents
+  end
+  
+  should "to_s all fields including slug (if it exists - after save)" do
+    class Yellow < PostType
+      fields :one, :two, :title, :body
+      primary :body
+      heading :title
+    end
+    
+    yellow = Yellow.new %Q{
+      One: hello1
+      Two: hello2
+      
+      This is the title
+      =================
+      
+      this is the body
+    }.indents
+    
+    yellow.save # to trigger defaults
+    
+    yellow.to_s.should == %Q{
+      one: hello1
+      two: hello2
+      title: This is the title
+      status: published
       slug: this-is-the-title
       
       this is the body
@@ -221,7 +250,7 @@ This will be in One."
     
     yellow = Yellow.new "one: hello"
     
-    yellow.to_s.should.match /^one: HELLO\nslug: .*/
+    yellow.to_s.should == "one: HELLO"
   end
   
   should "have a special block for tags" do
@@ -242,14 +271,14 @@ This will be in One."
     Yellow.string_for_blocks[:tags].should.not.be.nil
   end
   
-  should "be always output the tags array as a comma separated string" do
+  should "always output the tags array as a comma separated string" do
     class Yellow < PostType
       fields :one
     end
     
     yellow = Yellow.new "one: hello\ntags: dog, cat, water"
     
-    yellow.to_s.should.match /^one: hello\nslug: .*\ntags: dog, cat, water.*/
+    yellow.to_s.should == "one: hello\ntags: dog, cat, water"
   end
   
 end

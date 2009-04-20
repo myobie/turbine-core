@@ -1,10 +1,7 @@
-* move slug stuff into a default block
-* have set_attr run specials and defaults
-* to_json needs to be implimented
-* to_yaml as well
 * to_html needs to be added to PostType
   - needs a haml helper to render from a string of haml
   - use the indents on String
   - make an html {} class method to create the haml strings
 
-* Organize methods in PostType
+* to_json needs to be implimented
+* to_yaml as well

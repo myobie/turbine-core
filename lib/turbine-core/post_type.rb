@@ -137,8 +137,14 @@ class PostType
     key = key.make_attr
     
     unless value.blank?
-      @content[key] = value
+      # run specials if there is one, or just set the key
+      if self.class.specials_blocks[key]
+        @content[key] = self.class.specials_blocks[key].call(value)
+      else
+        @content[key] = value
+      end
       
+      # run markdowns if there is one
       if self.class.markdown_fields.include?(key)
         markdown = Markdown.new @content[key].strip
         @content[key.html] = markdown.to_html.strip
@@ -146,6 +152,7 @@ class PostType
         @content.delete(key.html)
       end
     else
+      # remove any blank valued keys
       @content.delete(key)
       @content.delete(key.html)
     end
@@ -289,9 +296,6 @@ class PostType
     when Hash
       commit_hash(result)
     end
-    
-    eval_specials # this won't be needed once the set_attr takes care of it
-    eval_defaults # this won't be needed once the get_attr takes care of it
   end
   
   def commit_hash(pairs_hash)
@@ -310,14 +314,6 @@ class PostType
     if valid?
       self.class.defaults_blocks.each do |key, block|
         set_default(key, self.instance_eval(&block))
-      end
-    end
-  end
-
-  def eval_specials
-    self.class.specials_blocks.each do |key, block|
-      unless get_attr(key).blank?
-        set_attr(key, block.call(get_attr(key)))
       end
     end
   end
@@ -345,11 +341,10 @@ class PostType
   def fill_default_fields
     set_default(:published_at, Time.now.utc)
     set_default(:status, default_status)
+    eval_defaults
   end
 
   def generate_slug # OPTIMIZE: this slug generation is ugly
-    return unless blank_attr?(:slug)
-    
     result = ''
   
     unless self.class.always_use_uuid
@@ -375,7 +370,7 @@ class PostType
       result = uuid
     end
   
-    set_attr(:slug, result)
+    result
   end
 
   def truncate_slug(letter_count = 50)
@@ -413,6 +408,10 @@ class PostType
     end
     
     result.strip
+  end
+  
+  def to_html
+    raise "Implement me please!"
   end
   
 end
