@@ -281,4 +281,45 @@ This will be in One."
     yellow.to_s.should == "one: hello\ntags: dog, cat, water"
   end
   
+  should "provide html" do
+    class Yellow < PostType
+      fields :one, :two, :three
+      primary :three
+    end
+    
+    yellow = Yellow.new "one: hello\ntwo: there\n\nhello there"
+    
+    yellow.to_html.should == "<p>one: hello\ntwo: there</p>\n\n<p>hello there</p>\n"
+  end
+  
+  should "keep an html block if provided" do
+    class Yellow < PostType
+      fields :one
+      
+      html {
+        haml %Q{
+          %h1= get_attr(:one)
+        }.indents
+      }
+    end
+    
+    Yellow.html_block.should.not.be.nil
+  end
+  
+  should "use an html block if provided" do
+    class Yellow < PostType
+      fields :one
+      
+      html {
+        haml %Q{
+          %h1= get_attr(:one)
+        }.indents(true)
+      }
+    end
+    
+    yellow = Yellow.new "one: hello"
+    
+    yellow.to_html.should == "<h1>hello</h1>\n"
+  end
+  
 end

@@ -1,6 +1,7 @@
 require 'rdiscount' # markdown
 require 'nokogiri'
 require 'uuidtools'
+require 'haml'
 
 class PostType
   extend ClassLevelInheritableAttributes
@@ -13,7 +14,7 @@ class PostType
   # vars to inherit down
   cattr_inheritable :fields_list, :allowed_fields_list, :required_fields_list, :primary_field, :heading_field, 
                     :specials_blocks, :defaults_blocks, :string_for_blocks, :only_declared_fields, :always_use_uuid,
-                    :truncate_slugs, :markdown_fields
+                    :truncate_slugs, :markdown_fields, :html_block
   
   # defaults for class instance inheritable vars
   @fields_list = []
@@ -28,6 +29,7 @@ class PostType
   @always_use_uuid = false
   @truncate_slugs = true
   @markdown_fields = []
+  @html_block = nil
   
   ### cattr_accessor
   @@preferred_order = []
@@ -112,6 +114,10 @@ class PostType
   def self.default(field, &block)
     field = field.make_attr
     self.defaults_blocks[field] = block if allowed_fields_list.include? field
+  end
+  
+  def self.html(&block)
+    self.html_block = block
   end
   
   def self.dynamic(field, &block)
@@ -408,8 +414,16 @@ class PostType
     result.strip
   end
   
+  def haml(data, options = {}, locals = {})
+    ::Haml::Engine.new(data, options).render(self, locals)
+  end
+  
   def to_html
-    raise "Implement me please!"
+    unless self.class.html_block.blank?
+      self.instance_eval(&self.class.html_block)
+    else
+      Markdown.new(to_s).to_html
+    end
   end
   
 end
