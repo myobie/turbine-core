@@ -13,6 +13,17 @@ class Quote < PostType
     quote_content.strip
   end
   
+  html do
+    haml %Q{
+      - unless blank_attr?(:source)
+        %p
+          Source:
+          = get_attr(:source)
+
+      %blockquote~ get_attr(:quote)
+    }.indents(true)
+  end
+  
   def self.detect?(text)
     pairs = get_pairs(text)
     

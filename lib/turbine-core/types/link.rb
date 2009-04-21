@@ -20,6 +20,15 @@ class Link < PostType
     result
   end
   
+  html do
+    haml %Q{
+      %h2
+        %a{:href=>get_attr(:url)}= get_attr(:title) || get_attr(:url)
+
+      ~ get_attr(:description)
+    }.indents(true)
+  end
+  
   def self.detect?(text)
     has_required? text
   end

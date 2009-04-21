@@ -19,6 +19,19 @@ class Photo < PostType
     'http://' + link_content.gsub(/^http:\/\//, '')
   end
   
+  html do
+    haml %Q{
+      %p
+        - if get_attr?(:url)
+          %a{:href=>get_attr(:url)}
+            %img{:src=>get_attr(:photo_url)}
+        - else
+          %img{:src=>get_attr(:photo_url)}
+
+      ~ get_attr(:caption)
+    }.indents(true)
+  end
+  
   def self.detect?(text)
     has_required? text
   end

@@ -12,6 +12,22 @@ class Review < PostType
     'http://' + link_content.gsub(/^http:\/\//, '')
   end
   
+  html do
+    haml %Q{
+      %h2
+        - if get_attr?(:url)
+          %a{:href=>get_attr(:url)}= get_attr(:item)
+        - else
+          = get_attr(:item)
+
+      %p
+        Rating:
+        = get_attr(:rating)
+
+      ~ get_attr(:description)
+    }.indents(true)
+  end
+  
   def self.detect?(text)
     has_required? text
   end

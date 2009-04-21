@@ -2,6 +2,16 @@ class Chat < PostType
   fields :transcript
   required :transcript
   
+  html do
+    haml %Q{
+      %ol
+        - get_attr(:transcript).each do |line|
+          %li
+            %strong= line.keys.first
+            = line.values.first
+    }.indents(true)
+  end
+  
   # override commit_pairs to make chat transcripts form the Me: pairs stuff
   def commit_array(pairs_array)
     transcript = []
