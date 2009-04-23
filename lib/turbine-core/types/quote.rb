@@ -33,6 +33,6 @@ class Quote < PostType
     markdown = Markdown.new(the_quote[:quote])
     quote_html = markdown.text.blank? ? "" : markdown.to_html.strip
     
-    !(text =~ /Quote: (.*)/).nil? || !(quote_html =~ /^<blockquote(.+)<\/blockquote>$/m).nil?
+    !(text =~ /Quote: (.*)/).nil? || !(quote_html.split("\n").first =~ /^<blockquote(.+)<\/blockquote>$/m).nil?
   end
 end
