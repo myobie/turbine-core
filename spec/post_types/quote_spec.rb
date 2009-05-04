@@ -6,7 +6,7 @@ describe Quote do
     @good_quote = ">    This should be a quote."
     @good_quote_with_source = "Source: George Washington\n\n>    This is what he said."
     @good_quote_all_pairs = "Quote: Hello\nSource: Me"
-    @bad_quote = "Rating: 4\nItem: Dyson\n\nThis should be the description."
+    @bad_quote = "URL: google.com\nTitle: Hello"
     
     class Yellow; end
     Object.send(:remove_const, :Yellow)
